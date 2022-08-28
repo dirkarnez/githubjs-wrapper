@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+    <script type="module" src="./githubjs-wrapper.js"></script>
+    <style>
+        #github-auth {
+            width: 400px;
+        }
+        
+        .container {
+            border: 1px solid #ccc!important;
+            padding: 16px;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <label for="github-auth">GitHub Auth:</label>
+    <input type="text" id="github-auth">
+
+    <br>
+    <br>
+    
+    <div class="container">
+        <label for="github-create-file-name">file name to create:</label>
+        <input type="text" id="github-create-file-name">
+        <textarea id="github-create-file-content-for-file-name"></textarea>
+        <br>
+        <button id="create-button" onclick="githubCreate()">Create</button>
+    </div>
+
+    <div class="container">
+        <label for="github-branch-name">branch name to read recursively:</label>
+        <input type="text" id="github-branch-name" value="main">
+        <button onclick="githubReadBranchRecursive()">Read</button>
+        <div id="branch-tree-view"></div>
+    </div>
+
+    <div class="container">
+        <textarea id="current-file"></textarea>
+        <button id="update-button" onclick="githubUpdateStringContentOfAFile()">Update</button>
+    </div>
+
+    <script>
+        const key = "github-auth-cookie";
+        const auth = Cookies.get(key);
+        const authInput = document.getElementById("github-auth");
+        if (!!auth) {
+            authInput.value = auth;
+        }
+        authInput.addEventListener("change", function() {
+            Cookies.set(key, authInput.value);
+        })
+    </script>
+
+    <script>
+        function githubCreate() {
+            const fileNameInput = document.getElementById("github-create-file-name");
+            const fileContentInput = document.getElementById("github-create-file-content-for-file-name");
+            const createButton = document.getElementById("create-button");
+            createButton.disabled = true;
+
+            window
+            .github(document.getElementById("github-auth").value)
+            .createFileWithStringContent(
+                fileNameInput.value,
+                fileContentInput.value
+            )
+            .then(response => {
+                if (!!response && (response.status >= 200 && response.status <= 299)) {
+                    fileNameInput.value = "";
+                    fileContentInput.value = "";
+                    alert("Successful!");
+                    createButton.disabled = false;
+                } else {
+                    alert("Fail");
+                }
+            });
+        }
+
+        function githubReadFileAsStringBySha(path, sha) {
+            const currentFile = document.getElementById("current-file");
+            currentFile.value = "";
+            currentFile.dataset.filename = undefined;
+            currentFile.dataset.sha = undefined;
+
+            window
+            .github(document.getElementById("github-auth").value)
+            .readAsString(sha)
+            .then(str => {
+                currentFile.value = str;
+                currentFile.dataset.filename = path;
+                currentFile.dataset.sha = sha;
+            });
+        }
+
+        function githubUpdateStringContentOfAFile(filename, sha, content) {
+            const currentFile = document.getElementById("current-file");
+            const updateButton = document.getElementById("update-button");
+            updateButton.disabled = true;
+
+            window
+            .github(document.getElementById("github-auth").value)
+            .updateStringContentOfAFile(
+                currentFile.dataset.filename, 
+                currentFile.dataset.sha, 
+                currentFile.value)
+            .then(response => {
+                if (!!response && (response.status >= 200 && response.status <= 299)) {
+                    currentFile.dataset.sha = response.data.content.sha;
+                    alert("Successful!");
+                    updateButton.disabled = false;
+                } else {
+                    alert("Fail");
+                }
+            });
+        }
+
+        function githubReadBranchRecursive() {
+            const branchTreeView = document.getElementById("branch-tree-view");
+            branchTreeView.innerHTML = "";
+
+            window
+            .github(document.getElementById("github-auth").value)
+            .readBranchRecursive(
+                document.getElementById("github-branch-name").value
+            )
+            .then(response => {
+                response.data.tree.forEach(leaf => {
+                    const p = document.createElement("p");
+                    p.innerText = leaf.path;
+                    p.dataset.sha = leaf.sha;
+
+                    const readButton = document.createElement("button");
+                    readButton.innerText = "Read as string";
+                    readButton.addEventListener("click", function(e) {
+                        githubReadFileAsStringBySha(leaf.path, leaf.sha);
+                    });
+
+                    p.appendChild(document.createTextNode("\u00A0"));
+                    p.appendChild(readButton);
+                    branchTreeView.appendChild(p);
+                })
+            })
+        }
+    </script>
+</body>
+</html>
