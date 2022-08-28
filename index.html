@@ -75,10 +75,15 @@
                     fileNameInput.value = "";
                     fileContentInput.value = "";
                     alert("Successful!");
-                    createButton.disabled = false;
                 } else {
                     alert("Fail");
                 }
+            })
+            .catch(err => {
+                alert(err.message);
+            })
+            .then(() => {
+                createButton.disabled = false;
             });
         }
 
