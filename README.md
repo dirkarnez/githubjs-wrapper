@@ -1,3 +1,3 @@
 githubjs-wrapper
 ================
-test5
+test6
