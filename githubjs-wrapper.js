@@ -1,4 +1,3 @@
-
 import { Octokit } from "https://cdn.skypack.dev/@octokit/core";
 
 window.github = function (authkey) {
