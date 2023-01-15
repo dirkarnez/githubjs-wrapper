@@ -26,7 +26,7 @@ window.github = function (authkey) {
     return {
         owner: "",
         repo: "",
-        int: function(owner, repo) {
+        init: function(owner, repo) {
             this.owner = owner;
             this.repo = repo;
         }, 
