@@ -2,9 +2,7 @@ import { Octokit } from "https://cdn.skypack.dev/@octokit/core";
 
 window.github = function (authkey) {
     const myOctokit = new Octokit({ auth: authkey });
-    const owner = "dirkarnez";
-    const repo = "githubjs-wrapper";
-
+    
     const base64ToBlob = (b64Data, contentType = '', sliceSize = 512)  => {
         const byteCharacters = atob(b64Data);
         const byteArrays = [];
@@ -24,34 +22,39 @@ window.github = function (authkey) {
         const blob = new Blob(byteArrays, { type: contentType });
         return blob;
     }
-
-    const getFileBySha = (fileSha) => {
-        return myOctokit
-        .request("GET /repos/:owner/:repo/git/blobs/:file_sha", {
-            owner: owner,
-            repo: repo,
-            file_sha: fileSha
-        });
-    }
-
+    
     return {
+        owner: "",
+        repo: "",
+        int: function(owner, repo) {
+            this.owner = owner;
+            this.repo = repo;
+        }, 
+        getFileBySha: function (fileSha){
+            return myOctokit
+            .request("GET /repos/:owner/:repo/git/blobs/:file_sha", {
+                owner: this.owner,
+                repo: this.repo,
+                file_sha: fileSha
+            });
+        },
         createFileWithStringContent: function(filename, content) {
             return myOctokit.request('PUT /repos/:owner/:repo/contents/:path', {
-                owner: owner,
-                repo: repo,
+                owner: this.owner,
+                repo: this.repo,
                 path: filename,
                 message: `- add ${filename}`,
                 content: btoa(content),
             });
         },
         readAsObjectURL: function(fileSha) {
-            return getFileBySha(fileSha)
+            return this.getFileBySha(fileSha)
             .then(response => {
                 return URL.createObjectURL(base64ToBlob(response.data.content));
             });
         },
         readAsString: function(fileSha) {
-            return getFileBySha(fileSha)
+            return this.getFileBySha(fileSha)
             .then(response => {
                 return base64ToBlob(response.data.content).text();
             });
@@ -59,21 +62,21 @@ window.github = function (authkey) {
         readBranchRecursive: function(branchName) {
             return myOctokit
             .request("GET /repos/{owner}/{repo}/branches/{branch}", {
-                owner: owner,
-                repo: repo,
+                owner: this.owner,
+                repo: this.repo,
                 branch: branchName
             })
             .then(response => myOctokit.request('GET /repos/{owner}/{repo}/git/trees/{tree_sha}', {
-                owner: owner,
-                repo: repo,
+                owner: this.owner,
+                repo: this.repo,
                 tree_sha: response.data.commit.commit.tree.sha,
                 recursive: "true"
             }));
         },
         updateStringContentOfAFile: function(filename, sha, content) {
             return myOctokit.request('PUT /repos/:owner/:repo/contents/:path', {
-                owner: owner,
-                repo: repo,
+                owner: this.owner,
+                repo: this.repo,
                 path: filename,
                 message: `- update ${filename}`,
                 content: btoa(content),
