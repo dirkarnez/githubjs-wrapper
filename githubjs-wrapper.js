@@ -65,7 +65,7 @@ window.github = function (authkey) {
                 repo: this.repo,
                 branch: branchName
             })
-            .then(response => myOctokit.request('GET /repos/{owner}/{repo}/git/trees/{tree_sha}', {
+            .then(response => this.myOctokit.request('GET /repos/{owner}/{repo}/git/trees/{tree_sha}', {
                 owner: this.owner,
                 repo: this.repo,
                 tree_sha: response.data.commit.commit.tree.sha,
