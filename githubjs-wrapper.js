@@ -22,7 +22,7 @@ window.github = function (myOctokit) {
     return {
         owner: "",
         repo: "",
-        myOctokit: myOctokit
+        myOctokit: myOctokit,
         init: function(owner, repo) {
             this.owner = owner;
             this.repo = repo;
