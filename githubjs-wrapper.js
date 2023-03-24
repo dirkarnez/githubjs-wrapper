@@ -1,6 +1,4 @@
-import { Octokit } from "https://cdn.skypack.dev/@octokit/core";
-
-window.github = function (authkey) {
+window.github = function (myOctokit, authkey) {
     const base64ToBlob = (b64Data, contentType = '', sliceSize = 512)  => {
         const byteCharacters = atob(b64Data);
         const byteArrays = [];
@@ -24,7 +22,7 @@ window.github = function (authkey) {
     return {
         owner: "",
         repo: "",
-        myOctokit: new Octokit({ auth: authkey }),
+        myOctokit: myOctokit
         init: function(owner, repo) {
             this.owner = owner;
             this.repo = repo;
