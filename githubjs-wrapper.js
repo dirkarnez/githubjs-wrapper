@@ -1,8 +1,6 @@
 import { Octokit } from "https://cdn.skypack.dev/@octokit/core";
 
 window.github = function (authkey) {
-    const myOctokit = new Octokit({ auth: authkey });
-    
     const base64ToBlob = (b64Data, contentType = '', sliceSize = 512)  => {
         const byteCharacters = atob(b64Data);
         const byteArrays = [];
@@ -26,12 +24,13 @@ window.github = function (authkey) {
     return {
         owner: "",
         repo: "",
+        myOctokit: new Octokit({ auth: authkey });
         init: function(owner, repo) {
             this.owner = owner;
             this.repo = repo;
         }, 
         getFileBySha: function (fileSha){
-            return myOctokit
+            return this.myOctokit
             .request("GET /repos/:owner/:repo/git/blobs/:file_sha", {
                 owner: this.owner,
                 repo: this.repo,
@@ -39,7 +38,7 @@ window.github = function (authkey) {
             });
         },
         createFileWithStringContent: function(filename, content) {
-            return myOctokit.request('PUT /repos/:owner/:repo/contents/:path', {
+            return this.myOctokit.request('PUT /repos/:owner/:repo/contents/:path', {
                 owner: this.owner,
                 repo: this.repo,
                 path: filename,
@@ -60,7 +59,7 @@ window.github = function (authkey) {
             });
         },
         readBranchRecursive: function(branchName) {
-            return myOctokit
+            return this.myOctokit
             .request("GET /repos/{owner}/{repo}/branches/{branch}", {
                 owner: this.owner,
                 repo: this.repo,
@@ -74,7 +73,7 @@ window.github = function (authkey) {
             }));
         },
         updateStringContentOfAFile: function(filename, sha, content) {
-            return myOctokit.request('PUT /repos/:owner/:repo/contents/:path', {
+            return this.myOctokit.request('PUT /repos/:owner/:repo/contents/:path', {
                 owner: this.owner,
                 repo: this.repo,
                 path: filename,
