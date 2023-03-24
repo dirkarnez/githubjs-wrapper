@@ -1,4 +1,4 @@
-window.github = function (myOctokit, authkey) {
+window.github = function (myOctokit) {
     const base64ToBlob = (b64Data, contentType = '', sliceSize = 512)  => {
         const byteCharacters = atob(b64Data);
         const byteArrays = [];
