@@ -24,7 +24,7 @@ window.github = function (authkey) {
     return {
         owner: "",
         repo: "",
-        myOctokit: new Octokit({ auth: authkey });
+        myOctokit: new Octokit({ auth: authkey }),
         init: function(owner, repo) {
             this.owner = owner;
             this.repo = repo;
