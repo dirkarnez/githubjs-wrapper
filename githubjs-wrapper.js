@@ -44,10 +44,10 @@ window.github = function (myOctokit) {
                 content: btoa(content),
             });
         },
-        readAsObjectURL: function(fileSha) {
+        readAsObjectURL: function(fileSha, contentType) {
             return this.getFileBySha(fileSha)
             .then(response => {
-                return URL.createObjectURL(base64ToBlob(response.data.content));
+                return URL.createObjectURL(base64ToBlob(response.data.content, contentType));
             });
         },
         readAsString: function(fileSha) {
