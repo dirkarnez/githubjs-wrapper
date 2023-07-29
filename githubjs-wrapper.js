@@ -44,7 +44,7 @@ window.github = function (myOctokit) {
                 content: btoa(content),
             });
         },
-        readAsObjectURL: function(fileSha, contentType) {
+        readAsObjectURL: function(fileSha, contentType = '') {
             return this.getFileBySha(fileSha)
             .then(response => {
                 return URL.createObjectURL(base64ToBlob(response.data.content, contentType));
