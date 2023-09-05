@@ -5,6 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+    <script
+    src="https://github.com/dirkarnez/webpack-umd-action/releases/download/%40octokit%2Fcore.2.0.10/core.2.0.10.min.js"></script>
     <script type="module" src="./githubjs-wrapper.js"></script>
     <style>
         #github-auth {
@@ -58,14 +60,17 @@
     </script>
 
     <script>
+        const myOctokit = new octokitCore.Octokit({ auth: document.getElementById("github-auth").value });
+        
         function githubCreate() {
             const fileNameInput = document.getElementById("github-create-file-name");
             const fileContentInput = document.getElementById("github-create-file-content-for-file-name");
             const createButton = document.getElementById("create-button");
             createButton.disabled = true;
 
+            
             window
-            .github(document.getElementById("github-auth").value)
+            .github(myOctokit)
             .createFileWithStringContent(
                 fileNameInput.value,
                 fileContentInput.value
@@ -94,7 +99,7 @@
             currentFile.dataset.sha = undefined;
 
             window
-            .github(document.getElementById("github-auth").value)
+            .github(myOctokit)
             .readAsString(sha)
             .then(str => {
                 currentFile.value = str;
@@ -109,7 +114,7 @@
             updateButton.disabled = true;
 
             window
-            .github(document.getElementById("github-auth").value)
+            .github(myOctokit)
             .updateStringContentOfAFile(
                 currentFile.dataset.filename, 
                 currentFile.dataset.sha, 
@@ -130,7 +135,7 @@
             branchTreeView.innerHTML = "";
 
             window
-            .github(document.getElementById("github-auth").value)
+            .github(myOctokit)
             .readBranchRecursive(
                 document.getElementById("github-branch-name").value
             )
