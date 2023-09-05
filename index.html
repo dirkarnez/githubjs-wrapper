@@ -69,8 +69,10 @@
             createButton.disabled = true;
 
             
-            window
-            .github(myOctokit)
+            var githubClient = window.github(myOctokit);
+             githubClient.init("dirkarnez", "githubjs-wrapper");
+                
+            githubClient
             .createFileWithStringContent(
                 fileNameInput.value,
                 fileContentInput.value
@@ -98,8 +100,10 @@
             currentFile.dataset.filename = undefined;
             currentFile.dataset.sha = undefined;
 
-            window
-            .github(myOctokit)
+            var githubClient = window.github(myOctokit);
+             githubClient.init("dirkarnez", "githubjs-wrapper");
+            
+            githubClient
             .readAsString(sha)
             .then(str => {
                 currentFile.value = str;
@@ -113,8 +117,10 @@
             const updateButton = document.getElementById("update-button");
             updateButton.disabled = true;
 
-            window
-            .github(myOctokit)
+           var githubClient = window.github(myOctokit);
+            githubClient.init("dirkarnez", "githubjs-wrapper");
+            
+            githubClient
             .updateStringContentOfAFile(
                 currentFile.dataset.filename, 
                 currentFile.dataset.sha, 
@@ -134,8 +140,10 @@
             const branchTreeView = document.getElementById("branch-tree-view");
             branchTreeView.innerHTML = "";
 
-            window
-            .github(myOctokit)
+           var githubClient = window.github(myOctokit);
+            githubClient.init("dirkarnez", "githubjs-wrapper");
+            
+            githubClient
             .readBranchRecursive(
                 document.getElementById("github-branch-name").value
             )
