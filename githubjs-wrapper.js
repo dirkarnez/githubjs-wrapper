@@ -35,7 +35,7 @@ window.github = function (myOctokit) {
                 file_sha: fileSha
             });
         },
-        getFileByPath: function(path, contentType = '') {
+        readFileByPathAsBlob: function(path, contentType = '') {
             return this.myOctokit.request('GET /repos/:owner/:repo/contents/{path}', {
                 owner: this.owner,
                 repo: this.repo,
