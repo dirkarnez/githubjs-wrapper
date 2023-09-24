@@ -36,9 +36,10 @@ window.github = function (myOctokit) {
             });
         },
         readFileByPathAsBlob: function(path, contentType = '') {
-            return this.myOctokit.request('GET /repos/:owner/:repo/contents/{path}', {
+            return this.myOctokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
                 owner: this.owner,
                 repo: this.repo,
+                path: path,
                 headers: {
                     'X-GitHub-Api-Version': '2022-11-28'
                 }
