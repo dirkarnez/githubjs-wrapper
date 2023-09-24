@@ -35,6 +35,18 @@ window.github = function (myOctokit) {
                 file_sha: fileSha
             });
         },
+        getFileByPath: function(path, contentType = '') {
+            return this.myOctokit.request('GET /repos/:owner/:repo/contents/{path}', {
+                owner: this.owner,
+                repo: this.repo,
+                headers: {
+                    'X-GitHub-Api-Version': '2022-11-28'
+                }
+            })
+            .then(response => {
+                return base64ToBlob(response.data.content, contentType);
+            });
+        },
         createFileWithStringContent: function(filename, content) {
             return this.myOctokit.request('PUT /repos/:owner/:repo/contents/:path', {
                 owner: this.owner,
