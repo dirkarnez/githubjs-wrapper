@@ -44,9 +44,7 @@ window.github = function (myOctokit) {
                     'X-GitHub-Api-Version': '2022-11-28'
                 }
             })
-            .then(response => {
-                return base64ToBlob(response.data.content, contentType);
-            });
+            .then(response => this.readAsBlob(response.data.sha, contentType));
         },
         createFileWithStringContent: function(filename, content) {
             return this.myOctokit.request('PUT /repos/:owner/:repo/contents/:path', {
