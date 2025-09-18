@@ -1,4 +1,12 @@
 window.github = function (myOctokit) {
+    // headers: baseHeaders
+    const baseHeaders = (() => {
+        const myHeaders = new Headers();
+        myHeaders.append('pragma', 'no-cache');
+        myHeaders.append('cache-control', 'no-cache');
+        return myHeaders;
+    })();
+    
     const base64ToBlob = (b64Data, contentType = '', sliceSize = 512)  => {
         const byteCharacters = atob(b64Data);
         const byteArrays = [];
@@ -30,6 +38,7 @@ window.github = function (myOctokit) {
         getFileBySha: function (fileSha){
             return this.myOctokit
             .request("GET /repos/:owner/:repo/git/blobs/:file_sha", {
+                headers: baseHeaders,
                 owner: this.owner,
                 repo: this.repo,
                 file_sha: fileSha
@@ -37,6 +46,7 @@ window.github = function (myOctokit) {
         },
         readFileByPathAsBlob: function(path, contentType = '') {
             return this.myOctokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
+                headers: baseHeaders,
                 owner: this.owner,
                 repo: this.repo,
                 path: path,
@@ -48,6 +58,7 @@ window.github = function (myOctokit) {
         },
         createFileWithStringContent: function(filename, content) {
             return this.myOctokit.request('PUT /repos/:owner/:repo/contents/:path', {
+                headers: baseHeaders,
                 owner: this.owner,
                 repo: this.repo,
                 path: filename,
@@ -76,11 +87,13 @@ window.github = function (myOctokit) {
         readBranchRecursive: function(branchName) {
             return this.myOctokit
             .request("GET /repos/{owner}/{repo}/branches/{branch}", {
+                headers: baseHeaders,
                 owner: this.owner,
                 repo: this.repo,
                 branch: branchName
             })
             .then(response => this.myOctokit.request('GET /repos/{owner}/{repo}/git/trees/{tree_sha}', {
+                headers: baseHeaders,
                 owner: this.owner,
                 repo: this.repo,
                 tree_sha: response.data.commit.commit.tree.sha,
@@ -89,6 +102,7 @@ window.github = function (myOctokit) {
         },
         updateStringContentOfAFile: function(filename, sha, content) {
             return this.myOctokit.request('PUT /repos/:owner/:repo/contents/:path', {
+                headers: baseHeaders,
                 owner: this.owner,
                 repo: this.repo,
                 path: filename,
